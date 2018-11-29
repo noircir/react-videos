@@ -10,6 +10,10 @@ class App extends React.Component {
         selectedVideo: null 
     };
 
+    componentDidMount() {
+        this.searchStringHandler('buildings');
+    }
+
     searchStringHandler = async searchTerm => {
         const res = await youtube.get('/search', {
             params: {
@@ -17,7 +21,10 @@ class App extends React.Component {
             }
         })
 
-        this.setState({videos: res.data.items})
+        this.setState({ 
+            videos: res.data.items, 
+            selectedVideo: res.data.items[0] 
+        })
     };
 
     videoSelectHandler = (video) => {
@@ -29,11 +36,22 @@ class App extends React.Component {
         return (
             <div className="ui container">
                 <SearchBar onSearchStringSubmit={this.searchStringHandler} />
-                <VideoDetail video={this.state.selectedVideo} />
-                <VideoList 
-                    onVideoSelect={this.videoSelectHandler} 
-                    videos={this.state.videos} 
-                    />
+                <div className="ui grid">
+
+                    <div className="ui row">
+                        <div className="eleven wide column">
+                            <VideoDetail video={this.state.selectedVideo} />
+                        </div>
+
+                        <div className="five wide column">
+                            <VideoList 
+                                onVideoSelect={this.videoSelectHandler} 
+                                videos={this.state.videos} 
+                                />
+                        </div>
+                    </div>
+
+                </div>
             </div>
         );
     }
