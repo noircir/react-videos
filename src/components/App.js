@@ -1,10 +1,14 @@
 import React from 'react';
 import SearchBar from './SearchBar';
 import VideoList from './VideoList';
+import VideoDetail from './VideoDetail';
 import youtube from '../apis/youtube';
 
 class App extends React.Component {
-    state = { videos: [] };
+    state = { 
+        videos: [],
+        selectedVideo: null 
+    };
 
     searchStringHandler = async searchTerm => {
         const res = await youtube.get('/search', {
@@ -16,12 +20,20 @@ class App extends React.Component {
         this.setState({videos: res.data.items})
     };
 
+    videoSelectHandler = (video) => {
+        this.setState({ selectedVideo: video })
+        console.log(this.state.selectedVideo);
+    }
+
     render() {
         return (
             <div className="ui container">
-                <SearchBar searchString={this.searchStringHandler} />
-                Videos found: {this.state.videos.length}
-                <VideoList videos={this.state.videos} />
+                <SearchBar onSearchStringSubmit={this.searchStringHandler} />
+                <VideoDetail video={this.state.selectedVideo} />
+                <VideoList 
+                    onVideoSelect={this.videoSelectHandler} 
+                    videos={this.state.videos} 
+                    />
             </div>
         );
     }
